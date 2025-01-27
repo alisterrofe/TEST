@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nearby Device Sharing</title>
+  <script>
+    async function shareContent() {
+      try {
+        // Create an HTML file content to share
+        const fileContent = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Shared File</title>
+          </head>
+          <body>
+            <h1>This is the shared file content</h1>
+            <p>Generated from the Nearby Device Sharing app.</p>
+          </body>
+          </html>
+        `;
+
+        // Create a Blob representing the file
+        const file = new Blob([fileContent], { type: 'text/html' });
+
+        // Check if Web Share API is supported
+        if (navigator.share && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: "Nearby Device Sharing",
+            text: "Sharing an HTML file using Web Share API",
+            files: [new File([file], "shared.html", { type: "text/html" })],
+          });
+          alert("File shared successfully!");
+        } else {
+          alert("Web Share API is not supported on this device.");
+        }
+      } catch (error) {
+        console.error("Error during sharing:", error);
+        alert("Failed to share content: " + error.message);
+      }
+    }
+  </script>
+</head>
+<body>
+  <div style="text-align: center; padding: 20px;">
+    <h1>Nearby Device Sharing</h1>
+    <p>Click the button below to share an HTML file using your device's sharing functionality.</p>
+    <button onclick="shareContent();" style="padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; background-color: #007bff; color: white;">
+      Share HTML File
+    </button>
+  </div>
+</body>
+</html>
+
