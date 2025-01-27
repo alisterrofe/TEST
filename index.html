@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirDrop Button</title>
+</head>
+<body>
+    <button id="airdropButton" style="font-size: 18px; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+        Share via AirDrop
+    </button>
+
+    <script>
+        document.getElementById('airdropButton').addEventListener('click', async () => {
+            // Check if the Web Share API is available
+            if (navigator.share) {
+                try {
+                    // Create the data to be shared
+                    const shareData = {
+                        title: 'My HTML Index',
+                        text: 'Check out this HTML document!',
+                        url: 'https://yourdomain.com/index.html' // Replace with your hosted HTML file URL
+                    };
+
+                    // Trigger the share dialog
+                    await navigator.share(shareData);
+                    console.log('Sharing successful');
+                } catch (err) {
+                    console.error('Error while sharing:', err);
+                }
+            } else {
+                alert('Sharing is not supported on this device.');
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
