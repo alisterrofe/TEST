@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nearby Device Sharing</title>
+  <script>
+    async function shareContent() {
+      try {
+        const device = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true, // Discover all nearby devices
+          optionalServices: ['battery_service'],
+        });
+
+        if (!device.gatt) {
+          alert("This device does not support GATT connection.");
+          return;
+        }
+
+        const server = await device.gatt.connect();
+        alert(`Connected to device: ${device.name || "Unknown"}`);
+
+        // Example: Access a specific service and characteristic (e.g., battery level)
+        const service = await server.getPrimaryService('battery_service');
+        const characteristic = await service.getCharacteristic('battery_level');
+        const value = await characteristic.readValue();
+
+        // Decode the value (assume it's a single byte for battery percentage)
+        const batteryLevel = value.getUint8(0);
+        alert(`Battery level of ${device.name || "Unknown"}: ${batteryLevel}%`);
+
+        // Sharing Content via Web Share API if available
+        if (navigator.share) {
+          await navigator.share({
+            title: 'Nearby Device Sharing',
+            text: `Connected to ${device.name || "Unknown"}. Battery level: ${batteryLevel}%`,
+            url: location.href,
+          });
+          alert('Content shared successfully!');
+        } else {
+          alert('Sharing is not supported on this device.');
+        }
+      } catch (error) {
+        console.error("Error sharing content:", error);
+        alert("Failed to share content: " + error.message);
+      }
+    }
+  </script>
+</head>
+<body>
+  <div style="text-align: center; padding: 20px;">
+    <h1>Nearby Device Sharing</h1>
+    <p>Click the button below to activate sharing functionality.</p>
+    <button onclick="shareContent();" style="padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; background-color: #28a745; color: white;">
+      Share Content
+    </button>
+
+    <div id="device-list" style="margin-top: 20px;">
+      <!-- Nearby devices will be listed here -->
+    </div>
+  </div>
+</body>
+</html>
