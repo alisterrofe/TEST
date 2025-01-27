@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proximity Sharing Widget</title>
+  <script>
+    async function sharePageContent() {
+      try {
+        // Extract all HTML content from the body
+        const pageContent = document.body.innerHTML;
+
+        // Check for navigator.share or Web NFC API
+        if (navigator.share) {
+          // Using Web Share API for proximity sharing
+          await navigator.share({
+            title: document.title,
+            text: "Shared content from the page",
+            url: location.href,
+          });
+          alert("Page content shared successfully!");
+        } else if ('NDEFReader' in window) {
+          // Using Web NFC API for NFC-based sharing
+          const nfc = new NDEFReader();
+          await nfc.write(pageContent);
+          alert("Page content shared over NFC!");
+        } else {
+          alert("Proximity sharing not supported on this device.");
+        }
+      } catch (error) {
+        console.error("Error sharing content:", error);
+        alert("Failed to share content: " + error.message);
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="widget-container" style="padding: 20px; border: 2px solid #ccc; border-radius: 10px; width: 300px; margin: 20px auto; text-align: center;">
+    <h2>Proximity Sharing</h2>
+    <p>Click the button below to share this page's content with nearby devices.</p>
+    <button onclick="sharePageContent()" style="padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; background-color: #007bff; color: white;">
+      Share Content
+    </button>
+  </div>
+</body>
+</html>
