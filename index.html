@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apple Pay Integration</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      background-color: #000;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #444;
+    }
+    #apple-pay-button {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Apple Pay Integration</h1>
+  <p>Click the button below to pay with Apple Pay:</p>
+
+  <!-- Apple Pay Button -->
+  <button id="apple-pay-button">Pay with Apple Pay</button>
+
+  <script>
+    const stripe = Stripe('your-publishable-key'); // Replace with your Stripe publishable key
+
+    // Check if Apple Pay is available
+    if (window.ApplePaySession && ApplePaySession.canMakePayments()) {
+      document.getElementById('apple-pay-button').style.display = 'block';
+    }
+
+    document.getElementById('apple-pay-button').addEventListener('click', async () => {
+      const { error } = await stripe.confirmApplePayPayment('your-client-secret', {
+        paymentMethod: {
+          type: 'card', // Apple Pay acts as a "card"
+        },
+      });
+
+      if (error) {
+        console.error(error.message);
+        alert('Payment failed: ' + error.message);
+      } else {
+        alert('Payment successful!');
+      }
+    });
+  </script>
+</body>
+</html>
+
